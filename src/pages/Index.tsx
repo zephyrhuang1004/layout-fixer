@@ -429,6 +429,274 @@ const Index = () => {
                 </div>
               </Card>
 
+              <Card className="p-5 hover:shadow-md hover:border-border/80 transition-all">
+                <div className="flex flex-col sm:flex-row gap-5">
+                  <div className="shrink-0 flex flex-row sm:flex-col items-center sm:items-start gap-3 sm:w-32 sm:border-r border-border sm:pr-4">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center text-xs font-bold text-green-700 border border-green-200">
+                      SY
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-xs font-semibold">
+                        Tsinghua University
+                      </span>
+                      <span className="text-[10px] text-muted-foreground">
+                        BS, Computer Sci.
+                      </span>
+                      <span className="text-[10px] text-muted-foreground/70 mt-0.5">
+                        GPA 3.92 / 4.0
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex-1 space-y-3">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="text-sm font-bold">
+                            MS Electrical Engineering
+                          </h3>
+                          <Badge className="gap-1 px-1.5 py-0.5 text-[10px] bg-success/10 text-success hover:bg-success/10 border-success/20">
+                            <span className="w-1.5 h-1.5 rounded-full bg-success" />
+                            錄取 (Fall 2024)
+                          </Badge>
+                        </div>
+                        <div className="flex flex-wrap gap-2 text-[10px] font-medium">
+                          <Badge variant="secondary">TOEFL 115</Badge>
+                          <Badge variant="secondary">GRE 330</Badge>
+                          <Badge className="bg-warning/10 text-warning hover:bg-warning/10 border-warning/20">
+                            2 篇論文
+                          </Badge>
+                        </div>
+                      </div>
+                      <span className="text-[10px] text-muted-foreground tabular-nums">
+                        1w ago
+                      </span>
+                    </div>
+
+                    <div className="pt-3 border-t border-border/50">
+                      <span className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground mb-2 block">
+                        其他申請結果
+                      </span>
+                      <div className="flex flex-wrap gap-2">
+                        <Badge className="gap-1.5 bg-success/10 text-success hover:bg-success/10 border-success/20 text-[11px]">
+                          <Check className="w-3 h-3" />
+                          UC Berkeley
+                        </Badge>
+                        <Badge className="gap-1.5 bg-success/10 text-success hover:bg-success/10 border-success/20 text-[11px]">
+                          <Check className="w-3 h-3" />
+                          Cornell
+                        </Badge>
+                        <Badge className="gap-1.5 bg-warning/10 text-warning hover:bg-warning/10 border-warning/20 text-[11px]">
+                          <Clock className="w-3 h-3" />
+                          MIT (Waitlist)
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+
+              <Card className="p-5 hover:shadow-md hover:border-border/80 transition-all">
+                <div className="flex flex-col sm:flex-row gap-5">
+                  <div className="shrink-0 flex flex-row sm:flex-col items-center sm:items-start gap-3 sm:w-32 sm:border-r border-border sm:pr-4">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-50 to-amber-100 flex items-center justify-center text-xs font-bold text-orange-700 border border-orange-200">
+                      AK
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-xs font-semibold">
+                        UC Berkeley
+                      </span>
+                      <span className="text-[10px] text-muted-foreground">
+                        BS, Mathematics
+                      </span>
+                      <span className="text-[10px] text-muted-foreground/70 mt-0.5">
+                        GPA 3.88 / 4.0
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex-1 space-y-3">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="text-sm font-bold">
+                            MS Computer Science
+                          </h3>
+                          <Badge className="gap-1 px-1.5 py-0.5 text-[10px] bg-success/10 text-success hover:bg-success/10 border-success/20">
+                            <span className="w-1.5 h-1.5 rounded-full bg-success" />
+                            錄取 with $15k/yr
+                          </Badge>
+                        </div>
+                        <div className="flex flex-wrap gap-2 text-[10px] font-medium">
+                          <Badge variant="secondary">TOEFL 109</Badge>
+                          <Badge variant="secondary">GRE 326</Badge>
+                          <Badge className="bg-purple-50 text-purple-700 hover:bg-purple-50 border-purple-200">
+                            Google Intern
+                          </Badge>
+                        </div>
+                      </div>
+                      <span className="text-[10px] text-muted-foreground tabular-nums">
+                        1w ago
+                      </span>
+                    </div>
+
+                    <div className="pt-3 border-t border-border/50">
+                      <span className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground mb-2 block">
+                        其他申請結果
+                      </span>
+                      <div className="flex flex-wrap gap-2">
+                        <Badge className="gap-1.5 bg-success/10 text-success hover:bg-success/10 border-success/20 text-[11px]">
+                          <Check className="w-3 h-3" />
+                          USC CS
+                        </Badge>
+                        <Badge className="gap-1.5 bg-success/10 text-success hover:bg-success/10 border-success/20 text-[11px]">
+                          <Check className="w-3 h-3" />
+                          UCSD
+                        </Badge>
+                        <Badge className="gap-1.5 bg-destructive/10 text-destructive hover:bg-destructive/10 border-destructive/20 text-[11px] opacity-75">
+                          <X className="w-3 h-3" />
+                          CMU MSCS
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+
+              <Card className="p-5 hover:shadow-md hover:border-border/80 transition-all">
+                <div className="flex flex-col sm:flex-row gap-5">
+                  <div className="shrink-0 flex flex-row sm:flex-col items-center sm:items-start gap-3 sm:w-32 sm:border-r border-border sm:pr-4">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-50 to-rose-100 flex items-center justify-center text-xs font-bold text-pink-700 border border-pink-200">
+                      MZ
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-xs font-semibold">
+                        Peking University
+                      </span>
+                      <span className="text-[10px] text-muted-foreground">
+                        BS, Physics
+                      </span>
+                      <span className="text-[10px] text-muted-foreground/70 mt-0.5">
+                        GPA 3.76 / 4.0
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex-1 space-y-3">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="text-sm font-bold">
+                            MS Data Science
+                          </h3>
+                          <Badge className="gap-1 px-1.5 py-0.5 text-[10px] bg-success/10 text-success hover:bg-success/10 border-success/20">
+                            <span className="w-1.5 h-1.5 rounded-full bg-success" />
+                            錄取 (Fall 2024)
+                          </Badge>
+                        </div>
+                        <div className="flex flex-wrap gap-2 text-[10px] font-medium">
+                          <Badge variant="secondary">TOEFL 110</Badge>
+                          <Badge variant="secondary">GRE 332</Badge>
+                          <Badge className="bg-warning/10 text-warning hover:bg-warning/10 border-warning/20">
+                            1 篇論文
+                          </Badge>
+                        </div>
+                      </div>
+                      <span className="text-[10px] text-muted-foreground tabular-nums">
+                        2w ago
+                      </span>
+                    </div>
+
+                    <div className="pt-3 border-t border-border/50">
+                      <span className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground mb-2 block">
+                        其他申請結果
+                      </span>
+                      <div className="flex flex-wrap gap-2">
+                        <Badge className="gap-1.5 bg-success/10 text-success hover:bg-success/10 border-success/20 text-[11px]">
+                          <Check className="w-3 h-3" />
+                          NYU DS
+                        </Badge>
+                        <Badge className="gap-1.5 bg-success/10 text-success hover:bg-success/10 border-success/20 text-[11px]">
+                          <Check className="w-3 h-3" />
+                          Duke MIDS
+                        </Badge>
+                        <Badge className="gap-1.5 bg-warning/10 text-warning hover:bg-warning/10 border-warning/20 text-[11px]">
+                          <Clock className="w-3 h-3" />
+                          UChicago (Pending)
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+
+              <Card className="p-5 hover:shadow-md hover:border-border/80 transition-all">
+                <div className="flex flex-col sm:flex-row gap-5">
+                  <div className="shrink-0 flex flex-row sm:flex-col items-center sm:items-start gap-3 sm:w-32 sm:border-r border-border sm:pr-4">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-50 to-purple-100 flex items-center justify-center text-xs font-bold text-violet-700 border border-violet-200">
+                      RK
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-xs font-semibold">
+                        Seoul National Univ.
+                      </span>
+                      <span className="text-[10px] text-muted-foreground">
+                        BS, Comp. Eng.
+                      </span>
+                      <span className="text-[10px] text-muted-foreground/70 mt-0.5">
+                        GPA 3.95 / 4.3
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex-1 space-y-3">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="text-sm font-bold">
+                            MS Computer Science
+                          </h3>
+                          <Badge className="gap-1 px-1.5 py-0.5 text-[10px] bg-success/10 text-success hover:bg-success/10 border-success/20">
+                            <span className="w-1.5 h-1.5 rounded-full bg-success" />
+                            錄取 (Fall 2024)
+                          </Badge>
+                        </div>
+                        <div className="flex flex-wrap gap-2 text-[10px] font-medium">
+                          <Badge variant="secondary">TOEFL 113</Badge>
+                          <Badge variant="secondary">GRE 329</Badge>
+                          <Badge className="bg-purple-50 text-purple-700 hover:bg-purple-50 border-purple-200">
+                            Microsoft Intern
+                          </Badge>
+                        </div>
+                      </div>
+                      <span className="text-[10px] text-muted-foreground tabular-nums">
+                        2w ago
+                      </span>
+                    </div>
+
+                    <div className="pt-3 border-t border-border/50">
+                      <span className="text-[10px] uppercase tracking-wider font-semibold text-muted-foreground mb-2 block">
+                        其他申請結果
+                      </span>
+                      <div className="flex flex-wrap gap-2">
+                        <Badge className="gap-1.5 bg-success/10 text-success hover:bg-success/10 border-success/20 text-[11px]">
+                          <Check className="w-3 h-3" />
+                          CMU MCDS
+                        </Badge>
+                        <Badge className="gap-1.5 bg-success/10 text-success hover:bg-success/10 border-success/20 text-[11px]">
+                          <Check className="w-3 h-3" />
+                          UWashington
+                        </Badge>
+                        <Badge className="gap-1.5 bg-destructive/10 text-destructive hover:bg-destructive/10 border-destructive/20 text-[11px] opacity-75">
+                          <X className="w-3 h-3" />
+                          Stanford MS
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+
               <Button variant="outline" className="w-full">
                 載入更多錄取回報
               </Button>
@@ -436,7 +704,7 @@ const Index = () => {
           </div>
 
           {/* Right Column */}
-          <aside className="lg:col-span-4 sticky self-start top-20 space-y-6">
+          <aside className="lg:col-span-4 space-y-6 lg:sticky lg:top-20 lg:self-start">
             {/* Test Scores */}
             <Card className="p-5">
               <h3 className="text-sm font-semibold mb-4">
