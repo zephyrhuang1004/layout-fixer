@@ -712,10 +712,11 @@ const Index = () => {
               </h3>
 
               <Tabs value={activeTestTab} onValueChange={setActiveTestTab}>
-                <TabsList className="w-full mb-5">
-                  <TabsTrigger value="toefl" className="flex-1 text-[11px]">TOEFL</TabsTrigger>
-                  <TabsTrigger value="gre" className="flex-1 text-[11px]">GRE</TabsTrigger>
-                  <TabsTrigger value="gmat" className="flex-1 text-[11px]">GMAT</TabsTrigger>
+                <TabsList className="w-full mb-5 grid grid-cols-4">
+                  <TabsTrigger value="toefl" className="text-[11px]">TOEFL</TabsTrigger>
+                  <TabsTrigger value="ielts" className="text-[11px]">IELTS</TabsTrigger>
+                  <TabsTrigger value="gre" className="text-[11px]">GRE</TabsTrigger>
+                  <TabsTrigger value="gmat" className="text-[11px]">GMAT</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="toefl" className="mt-0">
@@ -743,6 +744,41 @@ const Index = () => {
                         { label: "Listening", score: 27 },
                         { label: "Speaking", score: 24 },
                         { label: "Writing", score: 26 },
+                      ].map((section) => (
+                        <div key={section.label} className="p-2 bg-accent rounded border border-border flex justify-between">
+                          <span className="text-muted-foreground">{section.label}</span>
+                          <span className="font-medium tabular-nums">{section.score}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="ielts" className="mt-0">
+                  <div className="flex items-end gap-2 mb-4">
+                    <span className="text-4xl font-bold tracking-tighter tabular-nums">
+                      7.5
+                    </span>
+                    <span className="text-xs text-muted-foreground mb-1.5">
+                      中位數 (Total 9.0)
+                    </span>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="relative h-8 w-full">
+                      <div className="absolute top-1/2 -translate-y-1/2 w-full h-1.5 bg-muted rounded-full" />
+                      <div className="absolute top-1/2 -translate-y-1/2 left-[50%] w-[40%] h-1.5 bg-info/20 rounded-full" />
+                      <div className="absolute top-1/2 -translate-y-1/2 left-[72%] w-3 h-3 bg-info border-2 border-card shadow-sm rounded-full z-10" />
+                      <div className="absolute -bottom-1 left-0 text-[9px] text-muted-foreground">5.0</div>
+                      <div className="absolute -bottom-1 right-0 text-[9px] text-muted-foreground">9.0</div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                      {[
+                        { label: "Reading", score: 8.0 },
+                        { label: "Listening", score: 7.5 },
+                        { label: "Speaking", score: 7.0 },
+                        { label: "Writing", score: 7.5 },
                       ].map((section) => (
                         <div key={section.label} className="p-2 bg-accent rounded border border-border flex justify-between">
                           <span className="text-muted-foreground">{section.label}</span>
@@ -785,8 +821,42 @@ const Index = () => {
                 </TabsContent>
 
                 <TabsContent value="gmat" className="mt-0">
-                  <div className="flex items-center justify-center h-32 text-xs text-muted-foreground">
-                    數據樣本不足
+                  <div className="flex items-end gap-2 mb-4">
+                    <span className="text-4xl font-bold tracking-tighter tabular-nums">
+                      720
+                    </span>
+                    <span className="text-xs text-muted-foreground mb-1.5">
+                      中位數 (Total 800)
+                    </span>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-xs">
+                        <span className="text-muted-foreground">Quant</span>
+                        <span className="font-medium tabular-nums">49 / 51</span>
+                      </div>
+                      <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                        <div className="bg-success h-full w-[96%] rounded-full" />
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-xs">
+                        <span className="text-muted-foreground">Verbal</span>
+                        <span className="font-medium tabular-nums">41 / 51</span>
+                      </div>
+                      <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                        <div className="bg-info h-full w-[80%] rounded-full" />
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="flex justify-between text-xs">
+                        <span className="text-muted-foreground">AWA</span>
+                        <span className="font-medium tabular-nums">5.5 / 6.0</span>
+                      </div>
+                      <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                        <div className="bg-warning h-full w-[92%] rounded-full" />
+                      </div>
+                    </div>
                   </div>
                 </TabsContent>
               </Tabs>
