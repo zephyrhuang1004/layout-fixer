@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Search, Plus, Share, Info, Users, GraduationCap, Award, ArrowRight, ArrowDownRight, Check, X, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,19 +17,19 @@ const Index = () => {
       <nav className="sticky top-0 z-50 border-b border-border bg-card/80 backdrop-blur-md">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-6">
-            <a href="/" className="flex items-center gap-2 group">
+            <Link to="/" className="flex items-center gap-2 group">
               <div className="w-6 h-6 bg-primary rounded text-primary-foreground flex items-center justify-center font-semibold text-xs tracking-tighter shadow-sm group-hover:opacity-90 transition-opacity">
                 A
               </div>
               <span className="font-semibold text-sm tracking-tight">
                 Admit.io
               </span>
-            </a>
+            </Link>
 
             <div className="hidden md:flex items-center gap-1 text-sm font-medium text-muted-foreground">
-              <a href="#" className="px-3 py-1.5 hover:text-foreground hover:bg-accent rounded-md transition-all">
+              <Link to="/schools" className="px-3 py-1.5 hover:text-foreground hover:bg-accent rounded-md transition-all">
                 學校庫
-              </a>
+              </Link>
               <a href="#" className="px-3 py-1.5 hover:text-foreground hover:bg-accent rounded-md transition-all">
                 錄取案例
               </a>
