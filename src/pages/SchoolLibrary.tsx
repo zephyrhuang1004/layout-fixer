@@ -171,16 +171,32 @@ const SchoolLibrary = () => {
 
       {/* Filters */}
       <section className="border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex flex-wrap gap-2">
-            <Badge variant="secondary" className="cursor-pointer hover:bg-primary hover:text-primary-foreground">全部</Badge>
-            <Badge variant="outline" className="cursor-pointer hover:bg-secondary">美國</Badge>
-            <Badge variant="outline" className="cursor-pointer hover:bg-secondary">英國</Badge>
-            <Badge variant="outline" className="cursor-pointer hover:bg-secondary">歐洲</Badge>
-            <Badge variant="outline" className="cursor-pointer hover:bg-secondary">亞洲</Badge>
-            <Badge variant="outline" className="cursor-pointer hover:bg-secondary">MBA</Badge>
-            <Badge variant="outline" className="cursor-pointer hover:bg-secondary">MiM</Badge>
-            <Badge variant="outline" className="cursor-pointer hover:bg-secondary">MS Finance</Badge>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+          <div className="flex flex-wrap gap-3">
+            <button className="px-4 py-2 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors">
+              全部
+            </button>
+            <button className="px-4 py-2 rounded-full border border-border bg-card text-foreground text-sm font-medium hover:bg-secondary transition-colors">
+              美國
+            </button>
+            <button className="px-4 py-2 rounded-full border border-border bg-card text-foreground text-sm font-medium hover:bg-secondary transition-colors">
+              英國
+            </button>
+            <button className="px-4 py-2 rounded-full border border-border bg-card text-foreground text-sm font-medium hover:bg-secondary transition-colors">
+              歐洲
+            </button>
+            <button className="px-4 py-2 rounded-full border border-border bg-card text-foreground text-sm font-medium hover:bg-secondary transition-colors">
+              亞洲
+            </button>
+            <button className="px-4 py-2 rounded-full border border-border bg-card text-foreground text-sm font-medium hover:bg-secondary transition-colors">
+              MBA
+            </button>
+            <button className="px-4 py-2 rounded-full border border-border bg-card text-foreground text-sm font-medium hover:bg-secondary transition-colors">
+              MiM
+            </button>
+            <button className="px-4 py-2 rounded-full border border-border bg-card text-foreground text-sm font-medium hover:bg-secondary transition-colors">
+              MS Finance
+            </button>
           </div>
         </div>
       </section>
@@ -190,20 +206,20 @@ const SchoolLibrary = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {schools.map((school) => (
             <Link key={school.id} to={`/school/${school.id}`}>
-              <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group">
-                <div className="aspect-video relative overflow-hidden">
+              <Card className="h-full overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group flex flex-col">
+                <div className="aspect-video relative overflow-hidden flex-shrink-0">
                   <img 
                     src={school.image} 
                     alt={school.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   <div className="absolute top-3 left-3">
-                    <Badge className="bg-primary/90 text-primary-foreground">
+                    <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-primary/90 text-primary-foreground text-xs font-semibold">
                       #{school.ranking} 排名
-                    </Badge>
+                    </span>
                   </div>
                 </div>
-                <CardContent className="p-4">
+                <CardContent className="p-4 flex flex-col flex-grow">
                   <h3 className="font-semibold text-foreground mb-1 group-hover:text-primary transition-colors">
                     {school.name}
                   </h3>
@@ -213,14 +229,17 @@ const SchoolLibrary = () => {
                     <span className="mx-1">·</span>
                     <span>{school.country}</span>
                   </div>
-                  <div className="flex flex-wrap gap-1.5 mb-4">
+                  <div className="flex flex-wrap gap-2 mb-4 h-[52px]">
                     {school.programs.slice(0, 3).map((program) => (
-                      <Badge key={program} variant="outline" className="text-xs">
+                      <span 
+                        key={program} 
+                        className="inline-flex items-center px-3 py-1 rounded-full border border-border bg-secondary/50 text-foreground text-xs font-medium"
+                      >
                         {program}
-                      </Badge>
+                      </span>
                     ))}
                   </div>
-                  <div className="grid grid-cols-3 gap-2 pt-3 border-t border-border">
+                  <div className="grid grid-cols-3 gap-2 pt-3 border-t border-border mt-auto">
                     <div className="text-center">
                       <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground mb-0.5">
                         <TrendingUp className="w-3 h-3" />
