@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { X, ChevronDown, Calendar, Check } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Search, Check, ChevronRight, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,13 +10,6 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 
 interface AddAdmissionSheetProps {
@@ -24,36 +17,42 @@ interface AddAdmissionSheetProps {
   onOpenChange: (open: boolean) => void;
 }
 
-const universities = [
-  "Stanford University",
-  "MIT",
-  "Harvard University",
-  "UC Berkeley",
-  "Carnegie Mellon University",
-  "UCLA",
-  "Columbia University",
-  "Yale University",
-  "Princeton University",
-  "其他"
+// Mock database of programs (simulating 100k entries)
+const mockPrograms = [
+  { id: 1, university: "University of Southern California", universityAbbr: "USC", degree: "MS", program: "Computer Science", programAbbr: "CS" },
+  { id: 2, university: "University of Southern California", universityAbbr: "USC", degree: "MS", program: "Electrical Engineering", programAbbr: "EE" },
+  { id: 3, university: "University of Southern California", universityAbbr: "USC", degree: "MS", program: "Mechanical Engineering", programAbbr: "ME" },
+  { id: 4, university: "University of Southern California", universityAbbr: "USC", degree: "PhD", program: "Computer Science", programAbbr: "CS" },
+  { id: 5, university: "University of California, Berkeley", universityAbbr: "UCB", degree: "MS", program: "Electrical Engineering", programAbbr: "EE" },
+  { id: 6, university: "University of California, Berkeley", universityAbbr: "UCB", degree: "MS", program: "Computer Science", programAbbr: "CS" },
+  { id: 7, university: "University of California, Berkeley", universityAbbr: "UCB", degree: "PhD", program: "Computer Science", programAbbr: "CS" },
+  { id: 8, university: "Massachusetts Institute of Technology", universityAbbr: "MIT", degree: "MS", program: "Electrical Engineering", programAbbr: "EE" },
+  { id: 9, university: "Massachusetts Institute of Technology", universityAbbr: "MIT", degree: "PhD", program: "Computer Science", programAbbr: "CS" },
+  { id: 10, university: "Stanford University", universityAbbr: "Stanford", degree: "MS", program: "Computer Science", programAbbr: "CS" },
+  { id: 11, university: "Stanford University", universityAbbr: "Stanford", degree: "MS", program: "Management Science and Engineering", programAbbr: "MS&E" },
+  { id: 12, university: "Carnegie Mellon University", universityAbbr: "CMU", degree: "MS", program: "Computer Science", programAbbr: "CS" },
+  { id: 13, university: "Carnegie Mellon University", universityAbbr: "CMU", degree: "MS", program: "Machine Learning", programAbbr: "ML" },
+  { id: 14, university: "University of California, Los Angeles", universityAbbr: "UCLA", degree: "MS", program: "Computer Science", programAbbr: "CS" },
+  { id: 15, university: "Georgia Institute of Technology", universityAbbr: "GaTech", degree: "MS", program: "Computer Science", programAbbr: "CS" },
 ];
 
-const programs = [
-  "MS Computer Science",
-  "MS Electrical Engineering",
-  "MS Data Science",
-  "MS Machine Learning",
-  "MBA",
-  "PhD Computer Science",
-  "PhD Economics",
-  "LLM",
-  "其他"
-];
+interface ProgramResult {
+  id: number;
+  university: string;
+  universityAbbr: string;
+  degree: string;
+  program: string;
+  programAbbr: string;
+  matchScore?: number;
+}
 
 export function AddAdmissionSheet({ open, onOpenChange }: AddAdmissionSheetProps) {
   const [step, setStep] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchResults, setSearchResults] = useState<ProgramResult[]>([]);
+  const [selectedProgram, setSelectedProgram] = useState<ProgramResult | null>(null);
   const [formData, setFormData] = useState({
-    university: "",
-    program: "",
     result: "",
     isFinalChoice: false,
     gpa: "",
@@ -64,21 +63,87 @@ export function AddAdmissionSheet({ open, onOpenChange }: AddAdmissionSheetProps
     notes: ""
   });
 
+  // Simulate smart search
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setSearchResults([]);
+      return;
+    }
+
+    setIsSearching(true);
+    
+    // Simulate API delay
+    const timer = setTimeout(() => {
+      const query = searchQuery.toLowerCase().trim();
+      const tokens = query.split(/[\s,]+/).filter(Boolean);
+      
+      // Identify degree tokens
+      const degreeTokens = ["ms", "phd", "mba", "llm", "meng", "bs", "ba"];
+      const foundDegree = tokens.find(t => degreeTokens.includes(t))?.toUpperCase();
+      
+      // Filter and score programs
+      const results = mockPrograms
+        .map(prog => {
+          let score = 0;
+          const searchableText = `${prog.university} ${prog.universityAbbr} ${prog.degree} ${prog.program} ${prog.programAbbr}`.toLowerCase();
+          
+          // Check each token
+          tokens.forEach(token => {
+            if (searchableText.includes(token)) {
+              score += 10;
+              // Bonus for exact abbreviation match
+              if (prog.universityAbbr.toLowerCase() === token || 
+                  prog.programAbbr.toLowerCase() === token ||
+                  prog.degree.toLowerCase() === token) {
+                score += 20;
+              }
+            }
+          });
+          
+          // Bonus if degree matches
+          if (foundDegree && prog.degree === foundDegree) {
+            score += 15;
+          }
+          
+          return { ...prog, matchScore: score };
+        })
+        .filter(prog => prog.matchScore > 0)
+        .sort((a, b) => (b.matchScore || 0) - (a.matchScore || 0))
+        .slice(0, 8);
+      
+      setSearchResults(results);
+      setIsSearching(false);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  const handleSelectProgram = (program: ProgramResult) => {
+    setSelectedProgram(program);
+    setStep(2);
+  };
+
   const handleNext = () => {
-    if (step < 3) setStep(step + 1);
+    if (step < 4) setStep(step + 1);
   };
 
   const handleBack = () => {
-    if (step > 1) setStep(step - 1);
+    if (step > 1) {
+      if (step === 2) {
+        setSelectedProgram(null);
+      }
+      setStep(step - 1);
+    }
   };
 
   const handleSubmit = () => {
     // Mock submit
     onOpenChange(false);
     setStep(1);
+    setSearchQuery("");
+    setSelectedProgram(null);
+    setSearchResults([]);
     setFormData({
-      university: "",
-      program: "",
       result: "",
       isFinalChoice: false,
       gpa: "",
@@ -90,12 +155,20 @@ export function AddAdmissionSheet({ open, onOpenChange }: AddAdmissionSheetProps
     });
   };
 
+  const handleClose = () => {
+    onOpenChange(false);
+    setStep(1);
+    setSearchQuery("");
+    setSelectedProgram(null);
+    setSearchResults([]);
+  };
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="bottom" className="h-[90vh] rounded-t-3xl">
         <SheetHeader className="pb-4 border-b border-border">
           <div className="flex items-center justify-between">
-            <Button variant="ghost" size="sm" onClick={() => onOpenChange(false)}>
+            <Button variant="ghost" size="sm" onClick={handleClose}>
               取消
             </Button>
             <SheetTitle>新增申請結果</SheetTitle>
@@ -103,7 +176,7 @@ export function AddAdmissionSheet({ open, onOpenChange }: AddAdmissionSheetProps
           </div>
           {/* Progress indicator */}
           <div className="flex items-center justify-center gap-2 mt-4">
-            {[1, 2, 3].map((s) => (
+            {[1, 2, 3, 4].map((s) => (
               <div
                 key={s}
                 className={`h-1.5 rounded-full transition-all ${
@@ -115,92 +188,170 @@ export function AddAdmissionSheet({ open, onOpenChange }: AddAdmissionSheetProps
         </SheetHeader>
 
         <div className="flex-1 overflow-y-auto py-6">
-          {/* Step 1: Basic Info */}
+          {/* Step 1: Smart Search */}
           {step === 1 && (
-            <div className="space-y-6">
-              <div className="text-center mb-8">
-                <h3 className="text-lg font-semibold">學校與科系</h3>
-                <p className="text-sm text-muted-foreground mt-1">選擇你申請的學校和科系</p>
+            <div className="space-y-4">
+              <div className="text-center mb-6">
+                <h3 className="text-lg font-semibold">搜尋系所</h3>
+                <p className="text-sm text-muted-foreground mt-1">
+                  輸入學校、學位、科系（順序不限、可用縮寫）
+                </p>
               </div>
 
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label>學校名稱</Label>
-                  <Select 
-                    value={formData.university} 
-                    onValueChange={(v) => setFormData({ ...formData, university: v })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="選擇學校" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {universities.map((uni) => (
-                        <SelectItem key={uni} value={uni}>{uni}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+              {/* Search Input */}
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <Input
+                  placeholder="例：USC MS CS、MIT PhD EE"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 h-12 text-base"
+                  autoFocus
+                />
+                {isSearching && (
+                  <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground animate-spin" />
+                )}
+              </div>
 
-                <div className="space-y-2">
-                  <Label>科系 / Program</Label>
-                  <Select 
-                    value={formData.program} 
-                    onValueChange={(v) => setFormData({ ...formData, program: v })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="選擇科系" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {programs.map((prog) => (
-                        <SelectItem key={prog} value={prog}>{prog}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>申請結果</Label>
-                  <div className="grid grid-cols-3 gap-3">
-                    {[
-                      { value: "admitted", label: "錄取", color: "bg-green-500/10 border-green-500/30 text-green-600" },
-                      { value: "waitlisted", label: "備取", color: "bg-yellow-500/10 border-yellow-500/30 text-yellow-600" },
-                      { value: "rejected", label: "未錄取", color: "bg-red-500/10 border-red-500/30 text-red-600" }
-                    ].map((option) => (
+              {/* Search Tips */}
+              {!searchQuery && (
+                <div className="space-y-3 mt-6">
+                  <p className="text-sm font-medium text-muted-foreground">搜尋提示</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {["USC MS CS", "MIT PhD EE", "Stanford MS", "CMU ML"].map((example) => (
                       <button
-                        key={option.value}
-                        onClick={() => setFormData({ ...formData, result: option.value })}
-                        className={`p-4 rounded-xl border-2 transition-all ${
-                          formData.result === option.value
-                            ? option.color + " border-current"
-                            : "border-border hover:border-muted-foreground/30"
-                        }`}
+                        key={example}
+                        onClick={() => setSearchQuery(example)}
+                        className="px-3 py-2 rounded-lg bg-muted/50 text-sm text-muted-foreground hover:bg-muted transition-colors text-left"
                       >
-                        <span className="font-medium">{option.label}</span>
+                        {example}
                       </button>
                     ))}
                   </div>
                 </div>
+              )}
 
-                {formData.result === "admitted" && (
-                  <div className="flex items-center justify-between p-4 rounded-xl bg-primary/5 border border-primary/20">
-                    <div>
-                      <p className="font-medium">這是我的最終選擇</p>
-                      <p className="text-sm text-muted-foreground">標記為你最終就讀的學校</p>
-                    </div>
-                    <Switch
-                      checked={formData.isFinalChoice}
-                      onCheckedChange={(checked) => setFormData({ ...formData, isFinalChoice: checked })}
-                    />
+              {/* Search Results */}
+              {searchResults.length > 0 && (
+                <div className="space-y-2 mt-4">
+                  <p className="text-sm font-medium text-muted-foreground">
+                    找到 {searchResults.length} 個結果
+                  </p>
+                  <div className="space-y-2">
+                    {searchResults.map((result) => (
+                      <button
+                        key={result.id}
+                        onClick={() => handleSelectProgram(result)}
+                        className="w-full p-4 rounded-xl border border-border hover:border-primary/50 hover:bg-primary/5 transition-all text-left group"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-2">
+                              <span className="px-2 py-0.5 rounded-md bg-primary/10 text-primary text-xs font-medium">
+                                {result.degree}
+                              </span>
+                              <span className="font-medium">{result.program}</span>
+                            </div>
+                            <p className="text-sm text-muted-foreground">
+                              {result.university}
+                            </p>
+                          </div>
+                          <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                        </div>
+                      </button>
+                    ))}
                   </div>
-                )}
-              </div>
+                </div>
+              )}
+
+              {/* No Results */}
+              {searchQuery && !isSearching && searchResults.length === 0 && (
+                <div className="text-center py-8">
+                  <p className="text-muted-foreground">找不到符合的系所</p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    試試其他關鍵字，或檢查拼寫
+                  </p>
+                </div>
+              )}
             </div>
           )}
 
-          {/* Step 2: Stats */}
-          {step === 2 && (
+          {/* Step 2: Confirm & Result */}
+          {step === 2 && selectedProgram && (
             <div className="space-y-6">
-              <div className="text-center mb-8">
+              <div className="text-center mb-6">
+                <h3 className="text-lg font-semibold">確認系所與結果</h3>
+                <p className="text-sm text-muted-foreground mt-1">確認選擇的系所並填寫申請結果</p>
+              </div>
+
+              {/* Selected Program Card */}
+              <div className="p-4 rounded-xl bg-primary/5 border border-primary/20">
+                <div className="flex items-start justify-between">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className="px-2 py-0.5 rounded-md bg-primary/10 text-primary text-xs font-medium">
+                        {selectedProgram.degree}
+                      </span>
+                      <span className="font-semibold">{selectedProgram.program}</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      {selectedProgram.university}
+                    </p>
+                  </div>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => { setStep(1); setSelectedProgram(null); }}
+                    className="text-muted-foreground"
+                  >
+                    更換
+                  </Button>
+                </div>
+              </div>
+
+              {/* Result Selection */}
+              <div className="space-y-2">
+                <Label>申請結果</Label>
+                <div className="grid grid-cols-3 gap-3">
+                  {[
+                    { value: "admitted", label: "錄取", color: "bg-green-500/10 border-green-500/30 text-green-600" },
+                    { value: "waitlisted", label: "備取", color: "bg-yellow-500/10 border-yellow-500/30 text-yellow-600" },
+                    { value: "rejected", label: "未錄取", color: "bg-red-500/10 border-red-500/30 text-red-600" }
+                  ].map((option) => (
+                    <button
+                      key={option.value}
+                      onClick={() => setFormData({ ...formData, result: option.value })}
+                      className={`p-4 rounded-xl border-2 transition-all ${
+                        formData.result === option.value
+                          ? option.color + " border-current"
+                          : "border-border hover:border-muted-foreground/30"
+                      }`}
+                    >
+                      <span className="font-medium">{option.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {formData.result === "admitted" && (
+                <div className="flex items-center justify-between p-4 rounded-xl bg-primary/5 border border-primary/20">
+                  <div>
+                    <p className="font-medium">這是我的最終選擇</p>
+                    <p className="text-sm text-muted-foreground">標記為你最終就讀的學校</p>
+                  </div>
+                  <Switch
+                    checked={formData.isFinalChoice}
+                    onCheckedChange={(checked) => setFormData({ ...formData, isFinalChoice: checked })}
+                  />
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Step 3: Stats */}
+          {step === 3 && (
+            <div className="space-y-6">
+              <div className="text-center mb-6">
                 <h3 className="text-lg font-semibold">申請資料</h3>
                 <p className="text-sm text-muted-foreground mt-1">填寫你的成績資料（選填）</p>
               </div>
@@ -256,10 +407,10 @@ export function AddAdmissionSheet({ open, onOpenChange }: AddAdmissionSheetProps
             </div>
           )}
 
-          {/* Step 3: Notes & Review */}
-          {step === 3 && (
+          {/* Step 4: Notes & Review */}
+          {step === 4 && (
             <div className="space-y-6">
-              <div className="text-center mb-8">
+              <div className="text-center mb-6">
                 <h3 className="text-lg font-semibold">補充說明</h3>
                 <p className="text-sm text-muted-foreground mt-1">分享你的申請心得（選填）</p>
               </div>
@@ -281,11 +432,15 @@ export function AddAdmissionSheet({ open, onOpenChange }: AddAdmissionSheetProps
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">學校</span>
-                      <span className="font-medium">{formData.university || "未填寫"}</span>
+                      <span className="font-medium">{selectedProgram?.university || "未填寫"}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">學位</span>
+                      <span className="font-medium">{selectedProgram?.degree || "未填寫"}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">科系</span>
-                      <span className="font-medium">{formData.program || "未填寫"}</span>
+                      <span className="font-medium">{selectedProgram?.program || "未填寫"}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">結果</span>
@@ -320,8 +475,14 @@ export function AddAdmissionSheet({ open, onOpenChange }: AddAdmissionSheetProps
               上一步
             </Button>
           )}
-          {step < 3 ? (
-            <Button onClick={handleNext} className="flex-1">
+          {step === 1 ? (
+            <div className="flex-1" /> // Spacer for step 1
+          ) : step < 4 ? (
+            <Button 
+              onClick={handleNext} 
+              className="flex-1"
+              disabled={step === 2 && !formData.result}
+            >
               下一步
             </Button>
           ) : (
