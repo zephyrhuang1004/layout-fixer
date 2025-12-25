@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { 
   User, 
   FileText, 
@@ -19,6 +20,9 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AddAdmissionSheet } from "@/components/AddAdmissionSheet";
+import { WritePostSheet } from "@/components/WritePostSheet";
+import { EditProfileSheet } from "@/components/EditProfileSheet";
 
 type TabType = "profile" | "report" | "posts" | "saved";
 
@@ -142,7 +146,11 @@ const getResultText = (result: string) => {
 };
 
 export default function UserProfile() {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<TabType>("profile");
+  const [showAddAdmission, setShowAddAdmission] = useState(false);
+  const [showWritePost, setShowWritePost] = useState(false);
+  const [showEditProfile, setShowEditProfile] = useState(false);
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -150,7 +158,7 @@ export default function UserProfile() {
       <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
         <div className="flex items-center justify-between px-4 h-14">
           <h1 className="text-lg font-semibold">我的頁面</h1>
-          <Button variant="ghost" size="icon">
+          <Button variant="ghost" size="icon" onClick={() => navigate("/settings")}>
             <Settings className="h-5 w-5" />
           </Button>
         </div>
@@ -178,7 +186,7 @@ export default function UserProfile() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <h2 className="text-xl font-bold truncate">{mockUser.name}</h2>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0">
+                    <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={() => setShowEditProfile(true)}>
                       <Edit3 className="h-4 w-4" />
                     </Button>
                   </div>
@@ -268,7 +276,7 @@ export default function UserProfile() {
               <p className="text-sm text-muted-foreground mb-4">
                 分享你的申請經歷，幫助更多學弟妹
               </p>
-              <Button className="w-full">
+              <Button className="w-full" onClick={() => setShowAddAdmission(true)}>
                 <PlusCircle className="h-4 w-4 mr-2" />
                 新增申請結果
               </Button>
@@ -305,7 +313,7 @@ export default function UserProfile() {
 
           {/* Posts Tab */}
           <TabsContent value="posts" className="space-y-6">
-            <Button className="w-full" variant="outline">
+            <Button className="w-full" variant="outline" onClick={() => setShowWritePost(true)}>
               <Edit3 className="h-4 w-4 mr-2" />
               撰寫新文章
             </Button>
@@ -408,6 +416,23 @@ export default function UserProfile() {
           </button>
         </div>
       </nav>
+
+      {/* Sheets */}
+      <AddAdmissionSheet open={showAddAdmission} onOpenChange={setShowAddAdmission} />
+      <WritePostSheet open={showWritePost} onOpenChange={setShowWritePost} />
+      <EditProfileSheet 
+        open={showEditProfile} 
+        onOpenChange={setShowEditProfile}
+        initialData={{
+          name: mockUser.name,
+          avatar: mockUser.avatar,
+          bio: mockUser.bio,
+          location: mockUser.location,
+          school: mockUser.school,
+          major: mockUser.major,
+          graduationYear: mockUser.graduationYear
+        }}
+      />
     </div>
   );
 }
