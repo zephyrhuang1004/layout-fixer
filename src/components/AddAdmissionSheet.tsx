@@ -480,20 +480,17 @@ export function AddAdmissionSheet({ open, onOpenChange }: AddAdmissionSheetProps
                 </p>
               </div>
 
-              {/* Progress dots */}
-              <div className="flex items-center justify-center gap-1.5">
-                {selectedPrograms.map((_, i) => (
-                  <div
-                    key={i}
-                    className={`h-2 w-2 rounded-full transition-all ${
-                      i === currentEditIndex 
-                        ? "bg-primary scale-125" 
-                        : selectedPrograms[i].result 
-                          ? "bg-primary/50" 
-                          : "bg-muted"
-                    }`}
+              {/* Progress indicator */}
+              <div className="flex items-center justify-center gap-2 py-1">
+                <span className="text-sm text-muted-foreground">
+                  第 <span className="font-semibold text-foreground">{currentEditIndex + 1}</span> / {selectedPrograms.length} 筆
+                </span>
+                <div className="flex-1 max-w-[120px] h-1.5 bg-muted rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-primary rounded-full transition-all duration-300"
+                    style={{ width: `${((currentEditIndex + 1) / selectedPrograms.length) * 100}%` }}
                   />
-                ))}
+                </div>
               </div>
 
               {/* Result Selection */}
