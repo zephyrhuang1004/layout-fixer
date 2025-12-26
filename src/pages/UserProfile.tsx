@@ -50,30 +50,44 @@ const mockAdmissions = [
     university: "Stanford University",
     program: "MS Computer Science",
     result: "admitted",
-    isFinalChoice: true
+    isFinalChoice: true,
+    scholarship: "full"
   },
   {
     id: 2,
     university: "MIT",
     program: "MS EECS",
     result: "admitted",
-    isFinalChoice: false
+    isFinalChoice: false,
+    scholarship: "ta"
   },
   {
     id: 3,
     university: "UC Berkeley",
     program: "MS Computer Science",
     result: "waitlisted",
-    isFinalChoice: false
+    isFinalChoice: false,
+    scholarship: "none"
   },
   {
     id: 4,
     university: "CMU",
     program: "MS Machine Learning",
     result: "rejected",
-    isFinalChoice: false
+    isFinalChoice: false,
+    scholarship: "none"
   }
 ];
+
+const getScholarshipText = (scholarship: string) => {
+  switch (scholarship) {
+    case "full": return "Full";
+    case "partial": return "Partial";
+    case "ta": return "TA";
+    case "ra": return "RA";
+    default: return null;
+  }
+};
 
 // Mock posts
 const mockPosts = [
@@ -251,11 +265,16 @@ export default function UserProfile() {
                   >
                     <div className="flex items-center justify-between">
                       <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <p className="font-medium truncate">{admission.university}</p>
                           {admission.isFinalChoice && (
                             <Badge variant="secondary" className="bg-primary/10 text-primary text-xs shrink-0">
                               最終選擇
+                            </Badge>
+                          )}
+                          {getScholarshipText(admission.scholarship) && (
+                            <Badge variant="secondary" className="bg-amber-500/10 text-amber-600 border-amber-500/20 text-xs shrink-0">
+                              {getScholarshipText(admission.scholarship)}
                             </Badge>
                           )}
                         </div>
@@ -298,11 +317,16 @@ export default function UserProfile() {
                   <Card key={admission.id} className="p-4">
                     <div className="flex items-center justify-between">
                       <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <p className="font-medium truncate">{admission.university}</p>
                           {admission.isFinalChoice && (
                             <Badge variant="secondary" className="bg-primary/10 text-primary text-xs shrink-0">
                               最終選擇
+                            </Badge>
+                          )}
+                          {getScholarshipText(admission.scholarship) && (
+                            <Badge variant="secondary" className="bg-amber-500/10 text-amber-600 border-amber-500/20 text-xs shrink-0">
+                              {getScholarshipText(admission.scholarship)}
                             </Badge>
                           )}
                         </div>
