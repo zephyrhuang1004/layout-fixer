@@ -89,6 +89,15 @@ const getScholarshipText = (scholarship: string) => {
   }
 };
 
+const getResultVariant = (result: string): "admitted" | "waitlisted" | "rejected" | "outline" => {
+  switch (result) {
+    case "admitted": return "admitted";
+    case "waitlisted": return "waitlisted";
+    case "rejected": return "rejected";
+    default: return "outline";
+  }
+};
+
 // Mock posts
 const mockPosts = [
   {
@@ -133,19 +142,6 @@ const mockSaved = [
     savedAt: "2024-03-05"
   }
 ];
-
-const getResultBadgeStyle = (result: string) => {
-  switch (result) {
-    case "admitted":
-      return "bg-green-500/10 text-green-600 border-green-500/20";
-    case "waitlisted":
-      return "bg-yellow-500/10 text-yellow-600 border-yellow-500/20";
-    case "rejected":
-      return "bg-red-500/10 text-red-600 border-red-500/20";
-    default:
-      return "bg-muted text-muted-foreground";
-  }
-};
 
 const getResultText = (result: string) => {
   switch (result) {
@@ -268,22 +264,19 @@ export default function UserProfile() {
                         <div className="flex items-center gap-2 flex-wrap">
                           <p className="font-medium truncate">{admission.university}</p>
                           {admission.isFinalChoice && (
-                            <Badge variant="secondary" className="bg-primary/10 text-primary text-xs shrink-0">
+                            <Badge variant="finalChoice" className="text-xs shrink-0">
                               最終選擇
                             </Badge>
                           )}
                           {getScholarshipText(admission.scholarship) && (
-                            <Badge variant="secondary" className="bg-amber-500/10 text-amber-600 border-amber-500/20 text-xs shrink-0">
+                            <Badge variant="scholarship" className="text-xs shrink-0">
                               {getScholarshipText(admission.scholarship)}
                             </Badge>
                           )}
                         </div>
                         <p className="text-sm text-muted-foreground truncate">{admission.program}</p>
                       </div>
-                      <Badge 
-                        variant="outline" 
-                        className={`shrink-0 ml-3 ${getResultBadgeStyle(admission.result)}`}
-                      >
+                      <Badge variant={getResultVariant(admission.result)} className="shrink-0 ml-3">
                         {getResultText(admission.result)}
                       </Badge>
                     </div>
@@ -320,12 +313,12 @@ export default function UserProfile() {
                         <div className="flex items-center gap-2 flex-wrap">
                           <p className="font-medium truncate">{admission.university}</p>
                           {admission.isFinalChoice && (
-                            <Badge variant="secondary" className="bg-primary/10 text-primary text-xs shrink-0">
+                            <Badge variant="finalChoice" className="text-xs shrink-0">
                               最終選擇
                             </Badge>
                           )}
                           {getScholarshipText(admission.scholarship) && (
-                            <Badge variant="secondary" className="bg-amber-500/10 text-amber-600 border-amber-500/20 text-xs shrink-0">
+                            <Badge variant="scholarship" className="text-xs shrink-0">
                               {getScholarshipText(admission.scholarship)}
                             </Badge>
                           )}
@@ -333,10 +326,7 @@ export default function UserProfile() {
                         <p className="text-sm text-muted-foreground truncate">{admission.program}</p>
                       </div>
                       <div className="flex items-center gap-2 shrink-0 ml-3">
-                        <Badge 
-                          variant="outline" 
-                          className={getResultBadgeStyle(admission.result)}
-                        >
+                        <Badge variant={getResultVariant(admission.result)}>
                           {getResultText(admission.result)}
                         </Badge>
                         <Button 

@@ -12,6 +12,11 @@ const badgeVariants = cva(
         secondary: "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
         destructive: "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
         outline: "text-foreground",
+        scholarship: "border-amber-500/20 bg-amber-500/10 text-amber-600",
+        admitted: "border-green-500/50 bg-green-500/10 text-green-600",
+        waitlisted: "border-yellow-500/50 bg-yellow-500/10 text-yellow-600",
+        rejected: "border-red-500/50 bg-red-500/10 text-red-600",
+        finalChoice: "border-transparent bg-primary/10 text-primary",
       },
     },
     defaultVariants: {
