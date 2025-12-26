@@ -51,6 +51,7 @@ interface ProgramResult {
 interface SelectedProgramWithResult extends ProgramResult {
   result: string;
   isFinalChoice: boolean;
+  scholarship: string;
   notes: string;
 }
 
@@ -144,6 +145,7 @@ export function AddAdmissionSheet({ open, onOpenChange }: AddAdmissionSheetProps
         ...program, 
         result: "", 
         isFinalChoice: false, 
+        scholarship: "none",
         notes: "" 
       }
     ]);
@@ -517,6 +519,34 @@ export function AddAdmissionSheet({ open, onOpenChange }: AddAdmissionSheetProps
                   ))}
                 </div>
               </div>
+
+              {/* Scholarship Selection */}
+              {selectedPrograms[currentEditIndex].result === "admitted" && (
+                <div className="space-y-2">
+                  <Label>獎學金</Label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      { value: "none", label: "無" },
+                      { value: "full", label: "Full" },
+                      { value: "partial", label: "Partial" },
+                      { value: "ta", label: "TA" },
+                      { value: "ra", label: "RA" }
+                    ].map((option) => (
+                      <button
+                        key={option.value}
+                        onClick={() => updateCurrentProgram("scholarship", option.value)}
+                        className={`p-2.5 rounded-xl border-2 transition-all text-sm ${
+                          selectedPrograms[currentEditIndex].scholarship === option.value
+                            ? "bg-primary/10 border-primary text-primary"
+                            : "border-border hover:border-muted-foreground/30"
+                        }`}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Final Choice Toggle */}
               {selectedPrograms[currentEditIndex].result === "admitted" && (
