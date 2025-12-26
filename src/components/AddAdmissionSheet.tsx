@@ -55,6 +55,9 @@ interface SelectedProgramWithResult extends ProgramResult {
 }
 
 export function AddAdmissionSheet({ open, onOpenChange }: AddAdmissionSheetProps) {
+  // Mock: check if user has existing stats record
+  const [hasExistingStats, setHasExistingStats] = useState(false); // Set to true to simulate returning user
+  
   const [step, setStep] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
@@ -71,6 +74,17 @@ export function AddAdmissionSheet({ open, onOpenChange }: AddAdmissionSheetProps
     gre: "",
     applicationDate: "",
   });
+
+  // Calculate actual step based on whether stats step should be shown
+  const getActualStep = () => {
+    if (hasExistingStats) {
+      // Skip stats step: 1 -> 2 -> 3 -> 4 becomes 1 -> 3 -> 4 (select -> results -> confirm)
+      return step;
+    }
+    return step;
+  };
+
+  const getTotalSteps = () => hasExistingStats ? 3 : 4;
 
   // Simulate smart search
   useEffect(() => {
@@ -142,19 +156,38 @@ export function AddAdmissionSheet({ open, onOpenChange }: AddAdmissionSheetProps
   };
 
   const handleNext = () => {
-    if (step === 3 && currentEditIndex < selectedPrograms.length - 1) {
-      setCurrentEditIndex(currentEditIndex + 1);
-    } else if (step < 4) {
-      if (step === 2) setCurrentEditIndex(0);
-      setStep(step + 1);
+    if (hasExistingStats) {
+      // Flow: 1 (select) -> 2 (results) -> 3 (confirm)
+      if (step === 2 && currentEditIndex < selectedPrograms.length - 1) {
+        setCurrentEditIndex(currentEditIndex + 1);
+      } else if (step < 3) {
+        if (step === 1) setCurrentEditIndex(0);
+        setStep(step + 1);
+      }
+    } else {
+      // Flow: 1 (stats) -> 2 (select) -> 3 (results) -> 4 (confirm)
+      if (step === 3 && currentEditIndex < selectedPrograms.length - 1) {
+        setCurrentEditIndex(currentEditIndex + 1);
+      } else if (step < 4) {
+        if (step === 2) setCurrentEditIndex(0);
+        setStep(step + 1);
+      }
     }
   };
 
   const handleBack = () => {
-    if (step === 3 && currentEditIndex > 0) {
-      setCurrentEditIndex(currentEditIndex - 1);
-    } else if (step > 1) {
-      setStep(step - 1);
+    if (hasExistingStats) {
+      if (step === 2 && currentEditIndex > 0) {
+        setCurrentEditIndex(currentEditIndex - 1);
+      } else if (step > 1) {
+        setStep(step - 1);
+      }
+    } else {
+      if (step === 3 && currentEditIndex > 0) {
+        setCurrentEditIndex(currentEditIndex - 1);
+      } else if (step > 1) {
+        setStep(step - 1);
+      }
     }
   };
 
@@ -198,18 +231,30 @@ export function AddAdmissionSheet({ open, onOpenChange }: AddAdmissionSheetProps
     resetForm();
   };
 
-  const canProceedFromStep1 = selectedPrograms.length > 0;
-  const canProceedFromStep3 = selectedPrograms[currentEditIndex]?.result !== "";
+  // Step conditions
+  const isStatsStep = !hasExistingStats && step === 1;
+  const isSelectStep = hasExistingStats ? step === 1 : step === 2;
+  const isResultsStep = hasExistingStats ? step === 2 : step === 3;
+  const isConfirmStep = hasExistingStats ? step === 3 : step === 4;
+
+  const canProceedFromStats = sharedStats.gpa !== "" || sharedStats.toefl !== "" || sharedStats.gre !== "";
+  const canProceedFromSelect = selectedPrograms.length > 0;
+  const canProceedFromResults = selectedPrograms[currentEditIndex]?.result !== "";
   const allResultsFilled = selectedPrograms.every(p => p.result !== "");
 
   const getStepTitle = () => {
-    switch (step) {
-      case 1: return "選擇系所";
-      case 2: return "共用資料";
-      case 3: return `填寫結果 (${currentEditIndex + 1}/${selectedPrograms.length})`;
-      case 4: return "確認送出";
-      default: return "";
+    if (isStatsStep) return "填寫成績";
+    if (isSelectStep) return "選擇系所";
+    if (isResultsStep) return `填寫結果 (${currentEditIndex + 1}/${selectedPrograms.length})`;
+    if (isConfirmStep) return "確認送出";
+    return "";
+  };
+
+  const getProgressSteps = () => {
+    if (hasExistingStats) {
+      return [1, 2, 3];
     }
+    return [1, 2, 3, 4];
   };
 
   return (
@@ -225,7 +270,7 @@ export function AddAdmissionSheet({ open, onOpenChange }: AddAdmissionSheetProps
           </div>
           {/* Progress indicator */}
           <div className="flex items-center justify-center gap-2 mt-4">
-            {[1, 2, 3, 4].map((s) => (
+            {getProgressSteps().map((s) => (
               <div
                 key={s}
                 className={`h-1.5 rounded-full transition-all ${
@@ -238,8 +283,65 @@ export function AddAdmissionSheet({ open, onOpenChange }: AddAdmissionSheetProps
         </SheetHeader>
 
         <ScrollArea className="flex-1 py-6">
-          {/* Step 1: Search and add multiple programs */}
-          {step === 1 && (
+          {/* Step: Stats (only for first-time users) */}
+          {isStatsStep && (
+            <div className="space-y-6 px-1">
+              <div className="text-center mb-4">
+                <p className="text-sm text-muted-foreground">
+                  請先填寫你的申請成績，這些資料會套用到所有系所
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>GPA</Label>
+                    <Input
+                      placeholder="例：3.8"
+                      value={sharedStats.gpa}
+                      onChange={(e) => setSharedStats({ ...sharedStats, gpa: e.target.value })}
+                      autoFocus
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>TOEFL / IELTS</Label>
+                    <Input
+                      placeholder="例：110"
+                      value={sharedStats.toefl}
+                      onChange={(e) => setSharedStats({ ...sharedStats, toefl: e.target.value })}
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>GRE / GMAT</Label>
+                  <Input
+                    placeholder="例：330"
+                    value={sharedStats.gre}
+                    onChange={(e) => setSharedStats({ ...sharedStats, gre: e.target.value })}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label>申請季</Label>
+                  <Input
+                    type="month"
+                    value={sharedStats.applicationDate}
+                    onChange={(e) => setSharedStats({ ...sharedStats, applicationDate: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div className="mt-6 p-4 rounded-xl bg-muted/30">
+                <p className="text-xs text-muted-foreground">
+                  填寫成績後，未來回報時將自動帶入這些資料
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Step: Search and add multiple programs */}
+          {isSelectStep && (
             <div className="space-y-4 px-1">
               <div className="text-center mb-4">
                 <p className="text-sm text-muted-foreground">
@@ -360,70 +462,8 @@ export function AddAdmissionSheet({ open, onOpenChange }: AddAdmissionSheetProps
             </div>
           )}
 
-          {/* Step 2: Shared Stats */}
-          {step === 2 && (
-            <div className="space-y-6 px-1">
-              <div className="text-center mb-4">
-                <p className="text-sm text-muted-foreground">
-                  這些資料會套用到所有 {selectedPrograms.length} 個系所
-                </p>
-              </div>
-
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>GPA</Label>
-                    <Input
-                      placeholder="例：3.8"
-                      value={sharedStats.gpa}
-                      onChange={(e) => setSharedStats({ ...sharedStats, gpa: e.target.value })}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>TOEFL / IELTS</Label>
-                    <Input
-                      placeholder="例：110"
-                      value={sharedStats.toefl}
-                      onChange={(e) => setSharedStats({ ...sharedStats, toefl: e.target.value })}
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>GRE / GMAT</Label>
-                  <Input
-                    placeholder="例：330"
-                    value={sharedStats.gre}
-                    onChange={(e) => setSharedStats({ ...sharedStats, gre: e.target.value })}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label>申請季</Label>
-                  <Input
-                    type="month"
-                    value={sharedStats.applicationDate}
-                    onChange={(e) => setSharedStats({ ...sharedStats, applicationDate: e.target.value })}
-                  />
-                </div>
-              </div>
-
-              {/* Preview selected programs */}
-              <div className="mt-6 p-4 rounded-xl bg-muted/30">
-                <p className="text-sm font-medium mb-3">接下來要填寫的系所：</p>
-                <div className="flex flex-wrap gap-2">
-                  {selectedPrograms.map((prog) => (
-                    <Badge key={prog.id} variant="outline" className="text-xs">
-                      {prog.universityAbbr} {prog.degree} {prog.programAbbr}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Step 3: Individual Results */}
-          {step === 3 && selectedPrograms[currentEditIndex] && (
+          {/* Step: Individual Results */}
+          {isResultsStep && selectedPrograms[currentEditIndex] && (
             <div className="space-y-6 px-1">
               {/* Current Program Card */}
               <div className="p-4 rounded-xl bg-primary/5 border border-primary/20">
@@ -505,8 +545,8 @@ export function AddAdmissionSheet({ open, onOpenChange }: AddAdmissionSheetProps
             </div>
           )}
 
-          {/* Step 4: Review & Submit */}
-          {step === 4 && (
+          {/* Step: Review & Submit */}
+          {isConfirmStep && (
             <div className="space-y-6 px-1">
               <div className="text-center mb-4">
                 <p className="text-sm text-muted-foreground">
@@ -574,32 +614,36 @@ export function AddAdmissionSheet({ open, onOpenChange }: AddAdmissionSheetProps
             {step > 1 && (
               <Button variant="outline" onClick={handleBack} className="flex-1">
                 <ChevronLeft className="h-4 w-4 mr-1" />
-                {step === 3 && currentEditIndex > 0 ? "上一個" : "上一步"}
+                {isResultsStep && currentEditIndex > 0 ? "上一個" : "上一步"}
               </Button>
             )}
             
-            {step === 1 && (
+            {isStatsStep && (
               <Button 
                 onClick={handleNext} 
-                disabled={!canProceedFromStep1}
+                disabled={!canProceedFromStats}
                 className="flex-1"
               >
-                下一步：填寫資料
+                下一步：選擇系所
                 <ChevronRight className="h-4 w-4 ml-1" />
               </Button>
             )}
             
-            {step === 2 && (
-              <Button onClick={handleNext} className="flex-1">
+            {isSelectStep && (
+              <Button 
+                onClick={handleNext} 
+                disabled={!canProceedFromSelect}
+                className="flex-1"
+              >
                 下一步：填寫結果
                 <ChevronRight className="h-4 w-4 ml-1" />
               </Button>
             )}
             
-            {step === 3 && (
+            {isResultsStep && (
               <Button 
                 onClick={handleNext} 
-                disabled={!canProceedFromStep3}
+                disabled={!canProceedFromResults}
                 className="flex-1"
               >
                 {currentEditIndex < selectedPrograms.length - 1 ? (
@@ -610,7 +654,7 @@ export function AddAdmissionSheet({ open, onOpenChange }: AddAdmissionSheetProps
               </Button>
             )}
             
-            {step === 4 && (
+            {isConfirmStep && (
               <Button onClick={handleSubmit} className="flex-1">
                 <Check className="h-4 w-4 mr-1" />
                 送出 {selectedPrograms.length} 筆結果
