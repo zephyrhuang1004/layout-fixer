@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Search, Check, ChevronRight, X, Loader2, Plus, Trash2, ChevronLeft } from "lucide-react";
+import { Search, Check, ChevronRight, X, Loader2, Plus, Trash2, ChevronLeft, Bell, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -53,6 +53,119 @@ interface SelectedProgramWithResult extends ProgramResult {
   isFinalChoice: boolean;
   scholarship: string;
   notes: string;
+}
+
+// Confirm Step Component
+function ConfirmStep({ 
+  selectedPrograms, 
+  sharedStats 
+}: { 
+  selectedPrograms: SelectedProgramWithResult[];
+  sharedStats: { gpa: string; toefl: string; gre: string; applicationDate: string };
+}) {
+  const [enableReminder, setEnableReminder] = useState(false);
+  
+  const hasFinalChoice = selectedPrograms.some(p => p.isFinalChoice);
+  const hasAdmitted = selectedPrograms.some(p => p.result === "admitted");
+  const showFinalChoiceReminder = hasAdmitted && !hasFinalChoice;
+
+  return (
+    <div className="space-y-6 px-1">
+      <div className="text-center mb-4">
+        <p className="text-sm text-muted-foreground">
+          確認以下 {selectedPrograms.length} 筆申請結果
+        </p>
+      </div>
+
+      {/* Final Choice Reminder */}
+      {showFinalChoiceReminder && (
+        <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30">
+          <div className="flex items-start gap-3">
+            <AlertCircle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+            <div className="flex-1 space-y-3">
+              <div>
+                <p className="font-medium text-sm text-amber-700">尚未選擇最終就讀學校</p>
+                <p className="text-xs text-amber-600/80 mt-1">
+                  你有錄取的結果，但尚未標記最終選擇。確定後可以回來編輯。
+                </p>
+              </div>
+              <div className="flex items-center justify-between p-3 rounded-lg bg-background/60">
+                <div className="flex items-center gap-2">
+                  <Bell className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm">提醒我回來編輯</span>
+                </div>
+                <Switch
+                  checked={enableReminder}
+                  onCheckedChange={setEnableReminder}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Shared Stats Summary */}
+      <div className="p-4 rounded-xl bg-muted/30">
+        <p className="text-sm font-medium mb-2">共用資料</p>
+        <div className="grid grid-cols-2 gap-2 text-sm">
+          {sharedStats.gpa && <p>GPA: <span className="font-medium">{sharedStats.gpa}</span></p>}
+          {sharedStats.toefl && <p>語言: <span className="font-medium">{sharedStats.toefl}</span></p>}
+          {sharedStats.gre && <p>GRE/GMAT: <span className="font-medium">{sharedStats.gre}</span></p>}
+          {sharedStats.applicationDate && <p>申請季: <span className="font-medium">{sharedStats.applicationDate}</span></p>}
+        </div>
+      </div>
+
+      {/* Programs Summary */}
+      <div className="space-y-3">
+        {selectedPrograms.map((prog) => (
+          <div
+            key={prog.id}
+            className="p-4 rounded-xl border border-border"
+          >
+            <div className="flex items-start justify-between">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="px-2 py-0.5 rounded-md bg-primary/10 text-primary text-xs font-medium">
+                    {prog.degree}
+                  </span>
+                  <span className="font-medium text-sm">{prog.program}</span>
+                </div>
+                <p className="text-xs text-muted-foreground">{prog.universityAbbr}</p>
+              </div>
+              <div className="flex items-center gap-2">
+                {prog.isFinalChoice && (
+                  <Badge className="bg-primary/10 text-primary text-xs">最終選擇</Badge>
+                )}
+                <Badge 
+                  variant="outline"
+                  className={
+                    prog.result === "admitted" ? "border-green-500/50 text-green-600" :
+                    prog.result === "waitlisted" ? "border-yellow-500/50 text-yellow-600" :
+                    "border-red-500/50 text-red-600"
+                  }
+                >
+                  {prog.result === "admitted" ? "錄取" : prog.result === "waitlisted" ? "備取" : "未錄取"}
+                </Badge>
+              </div>
+            </div>
+            {prog.scholarship && prog.scholarship !== "none" && (
+              <div className="mt-2">
+                <Badge variant="secondary" className="text-xs">
+                  {prog.scholarship === "full" ? "Full" : 
+                   prog.scholarship === "partial" ? "Partial" :
+                   prog.scholarship === "ta" ? "TA" :
+                   prog.scholarship === "ra" ? "RA" : ""}
+                </Badge>
+              </div>
+            )}
+            {prog.notes && (
+              <p className="text-xs text-muted-foreground mt-2 line-clamp-2">{prog.notes}</p>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 export function AddAdmissionSheet({ open, onOpenChange }: AddAdmissionSheetProps) {
@@ -574,64 +687,10 @@ export function AddAdmissionSheet({ open, onOpenChange }: AddAdmissionSheetProps
 
           {/* Step: Review & Submit */}
           {isConfirmStep && (
-            <div className="space-y-6 px-1">
-              <div className="text-center mb-4">
-                <p className="text-sm text-muted-foreground">
-                  確認以下 {selectedPrograms.length} 筆申請結果
-                </p>
-              </div>
-
-              {/* Shared Stats Summary */}
-              <div className="p-4 rounded-xl bg-muted/30">
-                <p className="text-sm font-medium mb-2">共用資料</p>
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  {sharedStats.gpa && <p>GPA: <span className="font-medium">{sharedStats.gpa}</span></p>}
-                  {sharedStats.toefl && <p>語言: <span className="font-medium">{sharedStats.toefl}</span></p>}
-                  {sharedStats.gre && <p>GRE/GMAT: <span className="font-medium">{sharedStats.gre}</span></p>}
-                  {sharedStats.applicationDate && <p>申請季: <span className="font-medium">{sharedStats.applicationDate}</span></p>}
-                </div>
-              </div>
-
-              {/* Programs Summary */}
-              <div className="space-y-3">
-                {selectedPrograms.map((prog) => (
-                  <div
-                    key={prog.id}
-                    className="p-4 rounded-xl border border-border"
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <span className="px-2 py-0.5 rounded-md bg-primary/10 text-primary text-xs font-medium">
-                            {prog.degree}
-                          </span>
-                          <span className="font-medium text-sm">{prog.program}</span>
-                        </div>
-                        <p className="text-xs text-muted-foreground">{prog.universityAbbr}</p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {prog.isFinalChoice && (
-                          <Badge className="bg-primary/10 text-primary text-xs">最終選擇</Badge>
-                        )}
-                        <Badge 
-                          variant="outline"
-                          className={
-                            prog.result === "admitted" ? "border-green-500/50 text-green-600" :
-                            prog.result === "waitlisted" ? "border-yellow-500/50 text-yellow-600" :
-                            "border-red-500/50 text-red-600"
-                          }
-                        >
-                          {prog.result === "admitted" ? "錄取" : prog.result === "waitlisted" ? "備取" : "未錄取"}
-                        </Badge>
-                      </div>
-                    </div>
-                    {prog.notes && (
-                      <p className="text-xs text-muted-foreground mt-2 line-clamp-2">{prog.notes}</p>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
+            <ConfirmStep 
+              selectedPrograms={selectedPrograms}
+              sharedStats={sharedStats}
+            />
           )}
         </ScrollArea>
 
