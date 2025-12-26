@@ -134,14 +134,12 @@ function ConfirmStep({
               </div>
               <div className="flex items-center gap-2">
                 {prog.isFinalChoice && (
-                  <Badge className="bg-primary/10 text-primary text-xs">最終選擇</Badge>
+                  <Badge variant="finalChoice" className="text-xs">最終選擇</Badge>
                 )}
                 <Badge 
-                  variant="outline"
-                  className={
-                    prog.result === "admitted" ? "border-green-500/50 text-green-600" :
-                    prog.result === "waitlisted" ? "border-yellow-500/50 text-yellow-600" :
-                    "border-red-500/50 text-red-600"
+                  variant={
+                    prog.result === "admitted" ? "admitted" :
+                    prog.result === "waitlisted" ? "waitlisted" : "rejected"
                   }
                 >
                   {prog.result === "admitted" ? "錄取" : prog.result === "waitlisted" ? "備取" : "未錄取"}
@@ -150,7 +148,7 @@ function ConfirmStep({
             </div>
             {prog.scholarship && prog.scholarship !== "none" && (
               <div className="mt-2">
-                <Badge variant="secondary" className="text-xs">
+                <Badge variant="scholarship" className="text-xs">
                   {prog.scholarship === "full" ? "Full" : 
                    prog.scholarship === "partial" ? "Partial" :
                    prog.scholarship === "ta" ? "TA" :
