@@ -23,6 +23,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AddAdmissionSheet } from "@/components/AddAdmissionSheet";
 import { WritePostSheet } from "@/components/WritePostSheet";
 import { EditProfileSheet } from "@/components/EditProfileSheet";
+import { EditAdmissionSheet } from "@/components/EditAdmissionSheet";
 
 type TabType = "profile" | "report" | "posts" | "saved";
 
@@ -151,6 +152,13 @@ export default function UserProfile() {
   const [showAddAdmission, setShowAddAdmission] = useState(false);
   const [showWritePost, setShowWritePost] = useState(false);
   const [showEditProfile, setShowEditProfile] = useState(false);
+  const [showEditAdmission, setShowEditAdmission] = useState(false);
+  const [editingAdmission, setEditingAdmission] = useState<typeof mockAdmissions[0] | null>(null);
+
+  const handleEditAdmission = (admission: typeof mockAdmissions[0]) => {
+    setEditingAdmission(admission);
+    setShowEditAdmission(true);
+  };
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -290,7 +298,14 @@ export default function UserProfile() {
                   <Card key={admission.id} className="p-4">
                     <div className="flex items-center justify-between">
                       <div className="min-w-0 flex-1">
-                        <p className="font-medium truncate">{admission.university}</p>
+                        <div className="flex items-center gap-2">
+                          <p className="font-medium truncate">{admission.university}</p>
+                          {admission.isFinalChoice && (
+                            <Badge variant="secondary" className="bg-primary/10 text-primary text-xs shrink-0">
+                              最終選擇
+                            </Badge>
+                          )}
+                        </div>
                         <p className="text-sm text-muted-foreground truncate">{admission.program}</p>
                       </div>
                       <div className="flex items-center gap-2 shrink-0 ml-3">
@@ -300,7 +315,12 @@ export default function UserProfile() {
                         >
                           {getResultText(admission.result)}
                         </Badge>
-                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-8 w-8"
+                          onClick={() => handleEditAdmission(admission)}
+                        >
                           <Edit3 className="h-4 w-4" />
                         </Button>
                       </div>
@@ -432,6 +452,11 @@ export default function UserProfile() {
           major: mockUser.major,
           graduationYear: mockUser.graduationYear
         }}
+      />
+      <EditAdmissionSheet
+        open={showEditAdmission}
+        onOpenChange={setShowEditAdmission}
+        admission={editingAdmission}
       />
     </div>
   );
