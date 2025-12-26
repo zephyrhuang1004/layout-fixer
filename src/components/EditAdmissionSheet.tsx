@@ -30,6 +30,7 @@ interface AdmissionData {
   degree?: string;
   result: string;
   isFinalChoice: boolean;
+  scholarship?: string;
   notes?: string;
 }
 
@@ -50,6 +51,7 @@ export function EditAdmissionSheet({
 }: EditAdmissionSheetProps) {
   const [result, setResult] = useState(admission?.result || "");
   const [isFinalChoice, setIsFinalChoice] = useState(admission?.isFinalChoice || false);
+  const [scholarship, setScholarship] = useState(admission?.scholarship || "none");
   const [notes, setNotes] = useState(admission?.notes || "");
 
   // Reset form when admission changes
@@ -57,6 +59,7 @@ export function EditAdmissionSheet({
     if (admission) {
       setResult(admission.result);
       setIsFinalChoice(admission.isFinalChoice);
+      setScholarship(admission.scholarship || "none");
       setNotes(admission.notes || "");
     }
   });
@@ -67,6 +70,7 @@ export function EditAdmissionSheet({
         ...admission,
         result,
         isFinalChoice,
+        scholarship,
         notes
       });
     }
@@ -136,6 +140,34 @@ export function EditAdmissionSheet({
                 ))}
               </div>
             </div>
+
+            {/* Scholarship Selection */}
+            {result === "admitted" && (
+              <div className="space-y-2">
+                <Label>獎學金</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    { value: "none", label: "無" },
+                    { value: "full", label: "Full" },
+                    { value: "partial", label: "Partial" },
+                    { value: "ta", label: "TA" },
+                    { value: "ra", label: "RA" }
+                  ].map((option) => (
+                    <button
+                      key={option.value}
+                      onClick={() => setScholarship(option.value)}
+                      className={`p-2.5 rounded-xl border-2 transition-all text-sm ${
+                        scholarship === option.value
+                          ? "bg-primary/10 border-primary text-primary"
+                          : "border-border hover:border-muted-foreground/30"
+                      }`}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Final Choice Toggle */}
             {result === "admitted" && (
