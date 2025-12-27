@@ -41,8 +41,8 @@ export function WritePostSheet({ open, onOpenChange }: WritePostSheetProps) {
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className="h-[95vh] rounded-t-3xl p-0">
-        <SheetHeader className="p-4 border-b border-border">
+      <SheetContent side="bottom" className="h-[95vh] flex flex-col p-0">
+        <SheetHeader className="p-4 border-b border-border px-6">
           <div className="flex items-center justify-between">
             <Button variant="ghost" size="sm" onClick={() => onOpenChange(false)}>
               取消
