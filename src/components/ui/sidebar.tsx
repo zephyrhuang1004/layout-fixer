@@ -152,7 +152,7 @@ const Sidebar = React.forwardRef<
 
   if (isMobile) {
     return (
-      <Sheet open={openMobile} onOpenChange={setOpenMobile} {...props}>
+      <Sheet open={openMobile} onOpenChange={setOpenMobile} direction={side === "left" ? "left" : "right"}>
         <SheetContent
           data-sidebar="sidebar"
           data-mobile="true"
