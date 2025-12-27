@@ -1,8 +1,54 @@
-@import "vaul/style.css";
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Vaul drawer styles */
+[data-vaul-drawer] {
+  touch-action: none;
+  will-change: transform;
+  transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+[data-vaul-drawer][data-state="open"] {
+  animation: slideFromBottom 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+[data-vaul-drawer][data-state="closed"] {
+  animation: slideToBottom 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+[data-vaul-overlay] {
+  animation-duration: 0.5s;
+  animation-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+[data-vaul-overlay][data-state="open"] {
+  animation-name: fadeIn;
+}
+
+[data-vaul-overlay][data-state="closed"] {
+  animation-name: fadeOut;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes slideFromBottom {
+  from { transform: translate3d(0, 100%, 0); }
+  to { transform: translate3d(0, 0, 0); }
+}
+
+@keyframes slideToBottom {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(0, 100%, 0); }
+}
 
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
 All colors MUST be HSL.
