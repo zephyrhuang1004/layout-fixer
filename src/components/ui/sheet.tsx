@@ -5,8 +5,14 @@ import { X } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-const Sheet = ({ shouldScaleBackground = true, ...props }: React.ComponentProps<typeof DrawerPrimitive.Root>) => (
-  <DrawerPrimitive.Root shouldScaleBackground={shouldScaleBackground} {...props} />
+const Sheet = ({ 
+  shouldScaleBackground = true, 
+  ...props 
+}: React.ComponentProps<typeof DrawerPrimitive.Root>) => (
+  <DrawerPrimitive.Root 
+    shouldScaleBackground={shouldScaleBackground} 
+    {...props} 
+  />
 );
 Sheet.displayName = "Sheet";
 
@@ -22,63 +28,95 @@ const SheetOverlay = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DrawerPrimitive.Overlay 
     ref={ref} 
-    className={cn("fixed inset-0 z-50 bg-black/80", className)} 
+    className={cn(
+      "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm",
+      className
+    )} 
     {...props} 
   />
 ));
-SheetOverlay.displayName = DrawerPrimitive.Overlay.displayName;
+SheetOverlay.displayName = "SheetOverlay";
 
 const sheetVariants = cva(
-  "fixed z-50 gap-4 bg-background p-6 shadow-lg",
+  "fixed z-50 flex flex-col bg-background shadow-xl outline-none",
   {
     variants: {
       side: {
-        top: "inset-x-0 top-0 border-b",
-        bottom: "inset-x-0 bottom-0 border-t",
-        left: "inset-y-0 left-0 h-full w-3/4 border-r sm:max-w-sm",
-        right: "inset-y-0 right-0 h-full w-3/4 border-l sm:max-w-sm",
+        top: "inset-x-0 top-0 rounded-b-[20px] border-b",
+        bottom: "inset-x-0 bottom-0 rounded-t-[20px] border-t",
+        left: "inset-y-0 left-0 h-full w-3/4 max-w-sm rounded-r-[20px] border-r",
+        right: "inset-y-0 right-0 h-full w-3/4 max-w-sm rounded-l-[20px] border-l",
       },
     },
     defaultVariants: {
-      side: "right",
+      side: "bottom",
     },
   },
 );
 
 interface SheetContentProps
   extends React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Content>,
-    VariantProps<typeof sheetVariants> {}
+    VariantProps<typeof sheetVariants> {
+  showHandle?: boolean;
+}
 
-const SheetContent = React.forwardRef<React.ElementRef<typeof DrawerPrimitive.Content>, SheetContentProps>(
-  ({ side = "right", className, children, ...props }, ref) => (
-    <SheetPortal>
-      <SheetOverlay />
-      <DrawerPrimitive.Content 
-        ref={ref} 
-        className={cn(sheetVariants({ side }), className)} 
-        {...props}
-      >
-        {side === "bottom" && (
-          <div className="mx-auto mt-4 h-1.5 w-[100px] rounded-full bg-muted" />
-        )}
-        {children}
-        <SheetClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none">
+const SheetContent = React.forwardRef<
+  React.ElementRef<typeof DrawerPrimitive.Content>, 
+  SheetContentProps
+>(({ side = "bottom", className, children, showHandle = true, ...props }, ref) => (
+  <SheetPortal>
+    <SheetOverlay />
+    <DrawerPrimitive.Content 
+      ref={ref} 
+      className={cn(sheetVariants({ side }), className)} 
+      {...props}
+    >
+      {/* Handle for bottom drawer */}
+      {(side === "bottom" || side === "top") && showHandle && (
+        <div className={cn(
+          "flex w-full justify-center py-3",
+          side === "top" && "order-last"
+        )}>
+          <DrawerPrimitive.Handle className="h-1.5 w-12 rounded-full bg-muted-foreground/30 transition-colors hover:bg-muted-foreground/50" />
+        </div>
+      )}
+      
+      {/* Close button for side drawers */}
+      {(side === "left" || side === "right") && (
+        <SheetClose className={cn(
+          "absolute top-4 rounded-full p-2 opacity-70 ring-offset-background transition-all hover:opacity-100 hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none",
+          side === "left" ? "right-4" : "left-4"
+        )}>
           <X className="h-4 w-4" />
           <span className="sr-only">Close</span>
         </SheetClose>
-      </DrawerPrimitive.Content>
-    </SheetPortal>
-  ),
-);
+      )}
+      
+      {children}
+    </DrawerPrimitive.Content>
+  </SheetPortal>
+));
 SheetContent.displayName = "SheetContent";
 
 const SheetHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn("grid gap-1.5 p-4 text-center sm:text-left", className)} {...props} />
+  <div 
+    className={cn(
+      "flex flex-col gap-1.5 px-6 pb-4 text-center sm:text-left",
+      className
+    )} 
+    {...props} 
+  />
 );
 SheetHeader.displayName = "SheetHeader";
 
 const SheetFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn("mt-auto flex flex-col gap-2 p-4", className)} {...props} />
+  <div 
+    className={cn(
+      "mt-auto flex flex-col gap-2 px-6 pb-6",
+      className
+    )} 
+    {...props} 
+  />
 );
 SheetFooter.displayName = "SheetFooter";
 
@@ -88,11 +126,14 @@ const SheetTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DrawerPrimitive.Title
     ref={ref}
-    className={cn("text-lg font-semibold leading-none tracking-tight", className)}
+    className={cn(
+      "text-lg font-semibold leading-none tracking-tight text-foreground",
+      className
+    )}
     {...props}
   />
 ));
-SheetTitle.displayName = DrawerPrimitive.Title.displayName;
+SheetTitle.displayName = "SheetTitle";
 
 const SheetDescription = React.forwardRef<
   React.ElementRef<typeof DrawerPrimitive.Description>,
@@ -104,7 +145,7 @@ const SheetDescription = React.forwardRef<
     {...props} 
   />
 ));
-SheetDescription.displayName = DrawerPrimitive.Description.displayName;
+SheetDescription.displayName = "SheetDescription";
 
 export {
   Sheet,

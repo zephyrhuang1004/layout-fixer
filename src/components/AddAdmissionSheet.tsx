@@ -372,8 +372,8 @@ export function AddAdmissionSheet({ open, onOpenChange }: AddAdmissionSheetProps
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className="h-[90vh] rounded-t-3xl flex flex-col">
-        <SheetHeader className="pb-4 border-b border-border flex-shrink-0">
+      <SheetContent side="bottom" className="h-[90vh] flex flex-col px-6">
+        <SheetHeader className="pb-4 border-b border-border flex-shrink-0 px-0">
           <div className="flex items-center justify-between">
             <Button variant="ghost" size="sm" onClick={handleClose}>
               取消

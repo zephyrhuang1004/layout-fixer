@@ -55,8 +55,8 @@ export function EditProfileSheet({ open, onOpenChange, initialData }: EditProfil
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className="h-[90vh] rounded-t-3xl">
-        <SheetHeader className="pb-4 border-b border-border">
+      <SheetContent side="bottom" className="h-[90vh] flex flex-col px-6">
+        <SheetHeader className="pb-4 border-b border-border px-0">
           <div className="flex items-center justify-between">
             <Button variant="ghost" size="sm" onClick={() => onOpenChange(false)}>
               取消
